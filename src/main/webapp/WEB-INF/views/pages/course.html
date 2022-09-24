@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title th:text="${course.getTitle()}">Курс</title>
+
+  <link rel="stylesheet" href="/resources/css/style.css">
+  <link rel="stylesheet" href="/resources/css/blocks/container.css">
+
+  <link rel="stylesheet" href="/resources/css/blocks/header.css">
+  <link rel="stylesheet" href="/resources/css/blocks/logo.css">
+
+  <link rel="stylesheet" href="/resources/css/blocks/section.css">
+  <link rel="stylesheet" href="/resources/css/blocks/courseList.css">
+  <link rel="stylesheet" href="/resources/css/blocks/assignForm.css">
+
+  <link rel="stylesheet" href="/resources/css/blocks/footer.css">
+</head>
+
+
+<body>
+
+<!--========== ШАПКА САЙТА ==========-->
+<header class="header">
+  <div class="container">
+    <div class="header__inner">
+      <div class="logo">
+        <a href="/langmaster" class="logo__link">LangMaster</a>
+      </div>
+
+      <nav class="nav" id="nav">
+        <a th:if="${user != null}"
+           th:href="@{/langmaster/profile/{name}(name=${user.getName()})}"
+           class="nav__link">Профиль</a>
+
+        <a th:if="${userIsAdmin}"
+           href="/langmaster/course/new"
+           class="nav__link">Создать курс</a>
+
+        <a th:if="${user == null}"
+           href="/langmaster/register"
+           class="nav__link">Регистрация</a>
+
+        <a th:if="${user == null}"
+           href="/langmaster/login"
+           class="nav__link">Войти</a>
+
+        <form th:if="${user != null}"
+              th:action="@{/langmaster/logout}"
+              th:method="POST"
+              class="logout">
+          <button class="nav__link" type="submit">Выйти</button>
+        </form>
+      </nav>
+
+      <button class="burger" id="burger" type="button">Burger</button>
+    </div> <!-- ./header__inner -->
+  </div> <!-- ./container -->
+</header>
+
+
+<!--========== СЕКЦИЯ С ОПИСАНИЕМ КУРСА ==========-->
+<section class="section">
+  <div class="container">
+    <header class="section__header">
+      <h2 th:text="${course.getTitle()}" class="section__title">Название курса</h2>
+      <img th:src="@{/resources/images/{image}(image=${course.getImage().getOriginalFilename()})}"
+           alt=""
+           class="section__image">
+    </header>
+
+    <div class="section__content">
+      <div class="course__description">
+        <strong>Описание курса: </strong>
+        <span th:text="${course.getDescription()}">Описание курса</span>
+      </div>
+
+      <h3>Уроки курса</h3>
+      <div class="course__lessons">
+        <ul th:if="${courseLessons != null && courseLessons.size() != 0}" class="lessons_list">
+
+          <a th:each="lesson : ${courseLessons}"
+             th:if="${user != null}"
+             th:href="${'/langmaster/course/' + {course.getId()} + '/lesson/' + {lesson.getId()}}"
+             class="lesson__link">
+            <li class="lesson"
+                th:text="${lesson.getTitle()}">Название урока</li>
+          </a>
+
+          <div th:each="lesson : ${courseLessons}"
+             th:unless="${user != null}"
+             th:href="${'/langmaster/course/' + {course.getId()} + '/lesson/' + {lesson.getId()}}"
+             class="lesson__link">
+            <li class="lesson"
+                th:text="${lesson.getTitle()}">Название урока</li>
+          </div>
+
+        </ul>
+
+        <div th:unless="${courseLessons != null && courseLessons.size() != 0}">
+          <p>Для этого курса пока нет уроков!</p>
+        </div>
+      </div> <!-- ./course__lessons -->
+
+      <form th:action="@{/langmaster/course/{id}/assign(id=${course.getId()})}"
+            th:method="POST"
+            th:if="${user != null && !courseIsInUserList}"
+            class="assign">
+        <button type="submit" class="assign__button">Пройти курс</button>
+      </form>
+
+      <div th:if="${userIsCourseCreator}"
+           style="margin-top: 25px">
+        <a th:href="@{/langmaster/course/{id}/create(id=${course.getId()})}"
+           class="assign__button">Добавить урок</a>
+
+        <a th:href="@{/langmaster/course/{id}/edit(id=${course.getId()})}"
+           class="assign__button">Изменить</a>
+      </div>
+
+      <form th:action="@{/langmaster/course/{id}/delete(id=${course.getId()})}"
+            th:method="DELETE"
+            th:if="${userIsCourseCreator}"
+            style="margin-top: 20px"
+            onsubmit="return confirm('Вы уверены, что хотите удалить курс?')"
+            class="form">
+        <button class="assign__button" type="submit">Удалить</button>
+      </form>
+    </div> <!-- ./section__content -->
+  </div> <!-- ./container -->
+</section>
+
+
+<!--========== ПОДВАЛ САЙТА ==========-->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__inner">
+      <div class="logo">
+        <a href="/langmaster" class="logo__link">LangMaster</a>
+      </div>
+
+      <span class="footer__text" id="footer-text"></span>
+    </div> <!-- ./footer__inner -->
+  </div> <!-- ./container -->
+</footer>
+
+
+<!--========== JAVASCRIPT ==========-->
+<script src="/resources/js/headerAndFooter.js"></script>
+
+</body>
+
+</html>

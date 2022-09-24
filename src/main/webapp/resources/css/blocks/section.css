@@ -1,0 +1,26 @@
+/*================
+  СТИЛИ ДЛЯ СЕКЦИЙ
+================*/
+.section {
+  padding-top: 65px;
+  padding-bottom: 30px;
+}
+
+.section__image {
+  width: 100%;
+  max-width: 550px;
+}
+
+.section__image.floating {
+  float: right;
+  max-width: 450px;
+}
+
+
+/* Медиа-запросы */
+@media (max-width: 1000px) {
+  .section__image.floating {
+    float: none;
+    max-width: 650px;
+  }
+}

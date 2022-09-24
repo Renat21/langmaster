@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title th:text="${lesson.getTitle()}">Название урока</title>
+
+  <link rel="stylesheet" href="/resources/css/style.css">
+  <link rel="stylesheet" href="/resources/css/blocks/container.css">
+  <link rel="stylesheet" href="/resources/css/blocks/logo.css">
+
+  <link rel="stylesheet" href="/resources/css/blocks/sidebar.css">
+  <link rel="stylesheet" href="/resources/css/blocks/lesson.css">
+  <link rel="stylesheet" href="/resources/css/blocks/form.css">
+</head>
+
+
+<body>
+
+<!--========== САЙДБАР СО СПИСКОМ УРОКОВ ==========-->
+<aside class="sidebar">
+  <ul class="lessons">
+    <li class="lesson__link logo">
+      <a href="/langmaster" class="lesson__title">LangMaster</a>
+    </li>
+
+    <li th:each="_lesson : ${lessonsList}" class="lesson__link">
+      <a th:href="${'/langmaster/course/' + {courseId} + '/lesson/' + {_lesson.getId()}}"
+         th:text="${_lesson.getTitle()}"
+         class="lesson__title">Название урока</a>
+    </li>
+  </ul>
+</aside>
+
+
+<!--========== СЕКЦИЯ С СОДЕРЖАНИЕМ УРОКА ==========-->
+<main class="lesson">
+  <div class="container">
+    <header class="lesson__header">
+      <h1 th:text="${lesson.getTitle()}" class="lesson__title">Название урока</h1>
+    </header>
+
+    <div th:utext="${lesson.getContent()}"
+         class="lesson__content">Содержание урока</div>
+
+    <form th:action="${'/langmaster/course/' + {courseId} + '/lesson/' + {lesson.getId()} + '/delete'}"
+          th:method="DELETE"
+          th:if="${userIsCourseCreator}"
+          style="color: var(--bg-primary)"
+          onsubmit="return confirm('Вы уверены, что хотите удалить урок?')"
+          class="form">
+      <a th:href="${'/langmaster/course/' + {courseId} + '/lesson/' + {lesson.getId()} + '/edit'}"
+         class="button">Изменить</a>
+      <button type="submit" class="button">Удалить</button>
+    </form>
+  </div> <!-- ./container -->
+</main>
+
+</body>
+
+</html>
